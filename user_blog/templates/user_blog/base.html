@@ -1,0 +1,57 @@
+<html>
+	<style>
+		input[type=text], select {
+	    width: 40%;
+	    padding: 12px 20px;
+	    margin: 8px 0;
+	    display: inline-block;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+		}
+		input[type=email], select {
+	    width: 40%;
+	    padding: 12px 20px;
+	    margin: 8px 0;
+	    display: inline-block;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+		}
+		input[type=submit] {
+		    padding: 14px 20px;
+		    margin: 8px 0;
+		    border: none;
+		    border-radius: 4px;
+		    cursor: pointer;
+		}
+	</style>
+    <head>
+		{% include "user_blog/stylesheets_js_css.html" %}
+		{% load static %}
+		<link type="text/css" rel="stylesheet" href="{% static "main.css" %}" />
+		<script type='text/javascript' src="{% static "js/knockout-3.4.2.js" %}"></script>
+
+		{% block extra_css %}{% endblock %}
+
+	</head>
+    <body>
+	{% include "user_blog/header.html" %}
+
+
+	{% if messages %}
+		<div class='container'>
+		  <div>
+			    {% for message in messages %}
+				    <div class="alert alert-danger">
+				    	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>				        
+				        {{ message }}
+				    </div>			    
+			    {% endfor %}
+		  </div>
+		</div>
+	{% endif %}
+        
+        {% block header %}{% endblock %}
+        {% block content %}{% endblock %}
+        
+    </body>
+</html>

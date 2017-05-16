@@ -1,0 +1,16 @@
+{% if user_name  %}
+<div class="navbar container">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <div class="btn-group pull-right">
+                <a href="#" class="btn btn-info" onclick="addpost()" role="button">Add Post</a> &nbsp;
+                [username: {{ user_name }}] &nbsp; &nbsp;
+                [<a href="/user_blog/logout/"><i class="glyphicon glyphicon-log-out"></i> Logout </a>]
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="flexend"> <a href="/user_blog/" class="btn btn-info" role="button">Login/SignUp</a> </div>
+{% endif %}
