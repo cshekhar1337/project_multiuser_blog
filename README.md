@@ -1,13 +1,16 @@
 # project_multiuser_blog
 ## About the project
 Multiuser blog. [ Developed using Django, deployed on gcloud ]
+
 Registration for new user and login module for registered users
+
 Mantains sessions of logged in user [which uses cookie in the background]
+
 Password hashed using salt and PBKDF2 algorithm
+
 If user has not created the post then he will not see the link to edit
+
 If user has liked the post then link to like is removed
-
-
 
 
 
