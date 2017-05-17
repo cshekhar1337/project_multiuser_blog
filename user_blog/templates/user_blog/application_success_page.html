@@ -8,6 +8,18 @@
 
 {% block content %}
 <div class="container">
+    {% if messages %}
+    <div class='container'>
+        <div>
+            {% for message in messages %}
+            <div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     <section>
         Welcome back <b>{{ name }}</b>
@@ -17,8 +29,11 @@
     <script type='text/javascript'>
         function likepost(value, dt, uname) {
             $.ajax({
-
-                url: './../likepost/' + value,
+                type: "POST",
+                url: '/user_blog/likepost/',
+                data: {
+                    'pid': value,
+                },
                 dataType: 'json',
                 success: function () {
                     //alert(data.value);
@@ -44,9 +59,10 @@
              */
             var s = getsubject(value);
             var c = getcontent(value);
+            $('#blogidmodal').val(value);
             $('#subjectmodal').val(s);
             $('#contentmodal').val(c);
-            var l = './../editpost/' + value + '/';
+            var l = '/user_blog/editpost/';
             $('#modal_form').attr('action', l);
             $('#myModalNorm').modal("show");
         }
@@ -55,19 +71,73 @@
             var c = "";
             $('#subjectmodal').val(s);
             $('#contentmodal').val(c);
-            var l = './../addpost/';
+            var l = '/user_blog/addpost/';
             $('#modal_form').attr('action', l);
             $('#myModalNorm').modal("show");
+        }
+        function addcomment(value) {
+            var s = "";
+            $('#commentidmodal').val(value);
+            $('#commentmodal').val(s);
+            var l = '/user_blog/addcomment/';
+            $('#modal_form_comment').attr('action', l);
+            $('#myCommentModal').modal("show");
+        }
+
+        function editcomment(value, cid) {
+            var c = getcomment(cid);
+            $('#commentmodal').val(c);
+            var l = '/user_blog/editcomment/';
+            $('#commentidmodal').val(cid);
+            $('#modal_form_comment').attr('action', l);
+            $('#myCommentModal').modal("show");
+        }
+        function deletecomment(value) {
+            $.ajax({
+                type: "POST",
+                url: '/user_blog/deletecomment/',
+                data: {
+                    'pid': value,
+                },
+                dataType: 'json',
+                success: function () {
+                    //alert(data.value);
+                    var s = '#comment_' + value;
+                    $(s).hide();
+
+                }
+            })
+        }
+        function deletepost(value) {
+            $.ajax({
+                type: "POST",
+                url: '/user_blog/deletepost/',
+                data: {
+                    'pid': value,
+                },
+                dataType: 'json',
+                success: function () {
+                    //alert(data.value);
+                    var s = '#blog_' + value;
+                    $(s).hide();
+
+                }
+            })
         }
         function getsubject(value) {
             var s = '#subjectid_' + value;
             return $(s).text();
 
         }
+
         function getcontent(value) {
             var s = '#contentid_' + value;
             return $(s).text();
 
+        }
+        function getcomment(cid) {
+            var s = '#div_com_id_' + cid;
+            return $(s).text();
         }
 
     </script>
@@ -105,6 +175,9 @@
                             <label for="contentmodal">Content</label>
                             <input type="text" class="form-control"
                                    id="contentmodal" name='content' placeholder="Content"/>
+                            <input type="hidden" class="form-control"
+                                   id="blogidmodal" name='blogid'/>
+
                         </div>
                         <button type="submit" class="btn btn-default">Submit</button>
                     </form>
@@ -118,38 +191,90 @@
     </div>
     <!-- Modal end -->
 
-    <section>
+    <!-- Modal for the edit comment pop up window. -->
+    <div class="modal fade" id="myCommentModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Edit your Comment
+                    </h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+
+                    <form id="modal_form_comment" role="form" method="post" action="">
+                        <div class="form-group">
+                            <label for="commentmodal">Comment</label>
+                            <input type="text" class="form-control"
+                                   id="commentmodal" name='comment' placeholder="Comment"/>
+                            <input type="hidden" class="form-control"
+                                   id="commentidmodal" name='commentid'/>
+                        </div>
+
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal end -->
+
+    <section style="background-color:#f6f6f6>
 
         {% for entry in res %}
 
+        <div id= " blog_{{entry.blog_id}}
+    ">
+    <div style="float: none"></div>
+    <div class="flexend">
 
-        <div class="flexend">
-            <div><b>Posted by </b>{{ entry.user_name }}</div>
-            &nbsp;
-            <div></b>Last Updated</b> {{ entry.updated_at }}</div>
-            &nbsp;
-        </div>
-        <div style="float: none"></div>
-        <div class="flexstart">
-            <b>Subject:</b>
-            <div id="subjectid_{{entry.blog_id}}">{{ entry.subject }}</div>
-        </div>
-
-        <div class="flexstart">
-            <div><b>Content:</b>
-                <div id="contentid_{{entry.blog_id}}">{{ entry.content }}</div>
-            </div>
-        </div>
-        <div style="float: none"></div>
-
-        {% if user_name and user_name != entry.user_name and user_name not in entry.likes%}
-        <div><a href="#" onclick="likepost({{entry.blog_id}}, this , '{{user_name}}')"> Like the article</a></div>
-        {% endif %}
         {% if user_name and user_name == entry.user_name %}
-        <div><a href="#" onclick="editpost({{entry.blog_id}})"> Edit the article </a></div>
+        <a href="#" class="btn btn-info" onclick="deletepost({{entry.blog_id}})" role="button">Delete Post</a> &nbsp;
+        {% endif %}
+        {% if user_name %}
+        <a href="#" class="btn btn-info" onclick="addcomment({{entry.blog_id}})" role="button">Add Comment</a> &nbsp;
         {% endif %}
 
 
+        <div><b>Posted by </b>{{ entry.user_name }}</div>
+        &nbsp;
+        <div></b>Last Updated</b> {{ entry.updated_at }}</div>
+        &nbsp;
+    </div>
+    <div style="float: none"></div>
+    <div class="flexstart">
+        <b>Subject:</b>
+        <div id="subjectid_{{entry.blog_id}}">&nbsp;{{ entry.subject }}</div>
+    </div>
+
+    <div class="flexstart">
+        <div><b>Content:</b>
+            <div id="contentid_{{entry.blog_id}}">{{ entry.content }}</div>
+        </div>
+    </div>
+    <div style="float: none"></div>
+
+    {% if user_name and user_name != entry.user_name and user_name not in entry.likes%}
+    <div><a href="#" onclick="likepost({{entry.blog_id}}, this , '{{user_name}}')"> Like the article</a></div>
+    {% endif %}
+    {% if user_name and user_name == entry.user_name %}
+    <div><a href="#" onclick="editpost({{entry.blog_id}})"> Edit the article </a></div>
+    {% endif %}
+
+    <section>
         <div class="flexend">
             <div id="likes_{{entry.blog_id}}"><b>Likes </b></div>
             &nbsp;
@@ -159,12 +284,38 @@
 
             {% endfor %}
         </div>
+    </section>
+
+    <section style="background-color:#f8f8f8">
+        <div>
+            <div id="comments_{{entry.blog_id}}"><b>comments </b></div>
+            &nbsp;
+            {% for temp in entry.comments %}
+            <div id="comment_{{temp.id}}">
+                {% if user_name and user_name == temp.user_name %}
+                <a href="#" class="btn btn-info" onclick="editcomment({{entry.blog_id}}, {{temp.id}})"> Edit
+                    Comment </a>
+                <a href="#" class="btn btn-info" onclick="deletecomment({{temp.id}})"> Delete Comment </a>
+                {% endif %}
+                <div class="flexend"><b>Posted by</b> &nbsp;{{ temp.user_name }}</div>
+
+                <div id="div_com_id_{{temp.id}}"> {{ temp.comment }}</div>
+                <hr>
+            </div>
+
+            &nbsp;
 
 
-        <hr>
+            {% endfor %}
+        </div>
+    </section>
 
 
-        {% endfor %}
+    <hr>
+    <br>
+
+
+    {% endfor %}
 
 
     </section>

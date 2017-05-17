@@ -37,7 +37,7 @@ class Blog_Post(models.Model):
 
 class Post_Like(models.Model):
     '''
-        Model for user_blog
+        Model for Post
     '''
     user_name = models.ForeignKey(
         User_Blog,
@@ -54,3 +54,24 @@ class Post_Like(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.blog_id, self.user_name)
+
+class Comment(models.Model):
+    '''
+        Model for comment
+    '''
+    comment_id = models.AutoField(serialize=False, primary_key=True)
+    comment = models.CharField(max_length=300)
+    user_name = models.ForeignKey(
+        User_Blog,
+        on_delete=models.CASCADE,
+
+    )
+    blog_id = models.ForeignKey(
+        Blog_Post,
+        on_delete=models.CASCADE,
+
+    )
+
+
+    def __str__(self):
+        return '%s %s' % (self.comment_id, self.comment)

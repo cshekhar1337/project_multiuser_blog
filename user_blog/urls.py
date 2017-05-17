@@ -22,9 +22,14 @@ urlpatterns = [
     url(r'^register/$', views.register, name = "register"),
     url(r'^blogview/$', views.login, name = "blogview"),
     url(r'^addpost/$', views.addpost, name = "addpost"),
-    url(r'^blog/$', views.blog_view, name = "blog_view"),
-    url(r'^likepost/(?P<pid>[0-9]+)/$', views.likepost, name = "likepost"),
-    url(r'^editpost/(?P<pid>[0-9]+)/$', views.editpost, name = "editpost"),
+    url(r'^addcomment/$', views.addcomment, name = "addcomment"),
+    url(r'^blog/$', views.blog_view, name ="blog_view"),
+    url(r'^likepost/$', views.likepost, name = "likepost"),
+    url(r'^editpost/$', views.editpost, name = "editpost"),
+    url(r'^editcomment/$', views.editcomment, name = "editcomment"),
+    url(r'^deletepost/$', views.deletepost, name = "deletepost"),
+    url(r'^deletecomment/$', views.deletecomment, name = "deletecomment"),
+
 
 
 ]
